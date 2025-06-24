@@ -82,6 +82,16 @@ export default function HomePage() {
   }
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+        if(!token){
+            if(!token){
+
+                alert("User not logged in")
+                router.push("/login")
+                return
+
+            }
+        }
     fetchUsers()
   }, [])
 
@@ -94,6 +104,7 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold text-gray-800">Products</h1>
         <div className='flex gap-4'>
 
+          <Link href={"/orders"} className='bg-green-500 text-white p-2 rounded hover:bg-green-600'>View Orders</Link>
           <Link href={"/cart"} className='bg-green-500 text-white p-2 rounded hover:bg-green-600'>View Cart</Link>
           <button onClick={handleLogout} className='bg-red-500 text-white p-2 rounded hover:bg-red-600'>Logout</button>
 

@@ -54,7 +54,7 @@ export default function CartPage(){
     async function removeItem(cartItemId: number){
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/api/Cart/RemoveProduct?cartItemId=${cartItemId}`, {
-            method: "DELET",
+            method: "DELETE",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -89,6 +89,16 @@ export default function CartPage(){
                 },
             })
 
+            if (res.status === 404) {
+                // Treat as empty cart
+                setCart({
+                    id: 0,
+                    userId: userId ?? 0,
+                    cartItems: [],
+                });
+                return;
+            }
+
             if(!res.ok){
                 const errData = await res.json();
                 setError(errData.message || 'Failed to fetch cart');
@@ -106,14 +116,25 @@ export default function CartPage(){
 
     if (error) return <p className="text-red-500">{error}</p>;
     if (!cart) return <p>Loading...</p>;
-    if (!cart.cartItems || cart.cartItems.length === 0) return <p>Your cart is empty.</p>;
+    if (!cart.cartItems || cart.cartItems.length === 0) return <div className="flex flex-col gap-4 items-center justify-center h-screen">
+
+      <p className="text-center text-gray-100 text-lg">Your cart is empty.</p>
+      <Link href={"/home"} className="text-2xl font-bold mb-4 hover:underline bg-yellow-300 p-1 text-gray-500 rounded">Return</Link>
+
+    </div>;
 
 
     return (
 
         <div className="max-w-3xl mx-auto p-4">
+            
+
+        <div className="flex justify-between">
             <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-            <Link href={"/home"} className="text-2xl font-bold mb-4">Return</Link>
+            <Link href={"/checkout"} className="text-2xl font-bold mb-4 hover:underline bg-yellow-300 p-1 text-gray-500 rounded">Checkout</Link>
+            <Link href={"/home"} className="text-2xl font-bold mb-4 hover:underline bg-yellow-300 p-1 text-gray-500 rounded">Return</Link>
+        </div>
+
         <ul className="space-y-4">
             {cart.cartItems.map(item => (
             <li key={item.id} className="flex justify-between border-b pb-2">
